@@ -2,17 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>ChiefFlex Giveaway – You Rock or Buy Starlink 😅</title>
+  <title>Chief Flex Giveaway –  😅</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
+  <!-- Supabase JS v2 (UMD) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
-    /* BRAND VIBE */
     body {
       background:
         radial-gradient(circle at top, #4c1d95 0, #020617 45%) fixed,
@@ -21,7 +23,6 @@
       cursor: crosshair;
     }
 
-    /* Animations */
     @keyframes floaty {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
@@ -29,11 +30,6 @@
     @keyframes glowPulse {
       0%, 100% { box-shadow: 0 0 10px rgba(129, 230, 217, 0.5); }
       50% { box-shadow: 0 0 22px rgba(129, 230, 217, 1); }
-    }
-    @keyframes wiggle {
-      0%, 100% { transform: rotate(0deg); }
-      25% { transform: rotate(1.5deg); }
-      75% { transform: rotate(-1.5deg); }
     }
     @keyframes popFade {
       0% { transform: scale(0.7); opacity: 0; }
@@ -44,21 +40,33 @@
       0% { opacity: 0; transform: translateY(18px); }
       100% { opacity: 1; transform: translateY(0); }
     }
-
-    .floaty { animation: floaty 3s ease-in-out infinite; }
-    .glow-pulse { animation: glowPulse 2.2s ease-in-out infinite; }
-    .wiggle { animation: wiggle 0.7s ease-in-out infinite; }
-    .pop-in { animation: popFade 0.4s ease-out forwards; }
-    .slide-in { animation: leaderboardSlide 0.4s ease-out forwards; }
-    .fun-btn { transition: transform 0.12s ease, box-shadow 0.12s ease; }
-    .fun-btn:hover { transform: scale(1.05) rotate(-1deg); box-shadow: 0 0 25px rgba(96, 165, 250, 0.5); }
-    .fun-btn:active { transform: scale(0.95); }
-
-    /* Sparkles */
+    @keyframes crownBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
     @keyframes sparkleFly {
       0% { opacity: 1; transform: translateY(0) scale(1); }
       100% { opacity: 0; transform: translateY(-30px) scale(0.4); }
     }
+    @keyframes pulseDot {
+      0%, 100% { opacity: 0.2; transform: translateY(0); }
+      50% { opacity: 1; transform: translateY(-3px); }
+    }
+    @keyframes slotSpin {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-100%); }
+    }
+
+    .floaty { animation: floaty 3s ease-in-out infinite; }
+    .glow-pulse { animation: glowPulse 2.2s ease-in-out infinite; }
+    .pop-in { animation: popFade 0.4s ease-out forwards; }
+    .slide-in { animation: leaderboardSlide 0.4s ease-out forwards; }
+    .crown-bounce { animation: crownBounce 1s ease-in-out infinite; }
+
+    .fun-btn { transition: transform 0.12s ease, box-shadow 0.12s ease; }
+    .fun-btn:hover { transform: scale(1.05) rotate(-1deg); box-shadow: 0 0 25px rgba(96, 165, 250, 0.5); }
+    .fun-btn:active { transform: scale(0.95); }
+
     .sparkle {
       position: fixed;
       width: 8px;
@@ -70,19 +78,10 @@
       z-index: 40;
     }
 
-    /* Slot machine overlay */
-    @keyframes pulseDot {
-      0%, 100% { opacity: 0.2; transform: translateY(0); }
-      50% { opacity: 1; transform: translateY(-3px); }
-    }
-    .dot-1 { animation: pulseDot 0.8s infinite; }
-    .dot-2 { animation: pulseDot 0.8s 0.2s infinite; }
-    .dot-3 { animation: pulseDot 0.8s 0.4s infinite; }
+    .dot-1, .dot-2, .dot-3 { animation: pulseDot 0.8s infinite; }
+    .dot-2 { animation-delay: 0.2s; }
+    .dot-3 { animation-delay: 0.4s; }
 
-    @keyframes slotSpin {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-100%); }
-    }
     .slot-window {
       overflow: hidden;
       height: 28px;
@@ -90,33 +89,24 @@
     .slot-strip {
       animation: slotSpin 0.5s linear infinite;
     }
-
-    /* Crown bounce */
-    @keyframes crownBounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-4px); }
-    }
-    .crown-bounce { animation: crownBounce 1s ease-in-out infinite; }
   </style>
 </head>
 <body class="min-h-screen text-slate-50 flex items-center justify-center p-4">
 
   <div class="w-full max-w-xl mx-auto">
 
-    <!-- HEADER -->
     <div class="text-center mb-6">
       <h1 class="text-4xl md:text-5xl font-black tracking-tight text-white drop-shadow-xl floaty">
-        ChiefFlex Giveaway 🎁
+        Chief Flex Giveaway 🎁
       </h1>
       <p class="mt-2 text-slate-200 text-sm md:text-base">
-        Be in the first <span class="font-bold text-emerald-300">two</span> or go find your destiny on the leaderboard 😅
+        Be in the first <span class="font-bold text-emerald-300">two</span> or go find your name on the leaderboard 😅
       </p>
     </div>
 
-    <!-- MAIN CARD -->
     <div class="relative bg-slate-900/70 border border-slate-700 rounded-3xl shadow-[0_25px_60px_rgba(0,0,0,0.75)] p-7 md:p-9 backdrop-blur-xl overflow-hidden glow-pulse">
 
-      <!-- Background blobs -->
+      <!-- blobs -->
       <div class="absolute -top-16 -right-10 w-48 h-48 bg-purple-500/25 rounded-full blur-3xl"></div>
       <div class="absolute -bottom-16 -left-10 w-48 h-48 bg-emerald-500/25 rounded-full blur-3xl"></div>
 
@@ -132,12 +122,12 @@
         <form id="entry-form" class="space-y-4 mt-3">
           <input
             id="username"
-            placeholder="Username (@iamchief)"
+            placeholder="Username (@saifyusuph)"
             class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 placeholder-slate-500 focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-sm"
           />
           <input
             id="fullname"
-            placeholder="Full Name (Chief Obi)"
+            placeholder="Full Name (S A Yusuf)"
             class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 placeholder-slate-500 focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-sm"
           />
           <input
@@ -146,7 +136,7 @@
             class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 placeholder-slate-500 focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-sm"
           />
 
-          <button class="fun-btn w-full mt-2 py-3 rounded-xl bg-gradient-to-r from-amber-300 via-emerald-300 to-sky-300 text-slate-900 font-extrabold text-base md:text-lg shadow-lg shadow-emerald-900/40">
+          <button class="fun-btn w-full mt-2 py-3 rounded-xl bg-gradient-to-r from-amber-300 via-emerald-300 to-sky-300 text-slate-900 font-extrabold text-base md:text-lg">
             NEXT 👉
           </button>
         </form>
@@ -163,7 +153,7 @@
         </div>
 
         <h2 class="text-3xl font-extrabold text-emerald-300 drop-shadow glow-pulse">
-          YOU MADE IT — YOU ROCK! 🤘
+          Wow you made it cheif... 🤘
         </h2>
 
         <p class="text-slate-200 text-sm mt-2 mb-4">
@@ -211,9 +201,7 @@
                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide">Username</th>
               </tr>
             </thead>
-            <tbody id="leaderboard-body" class="divide-y divide-slate-800">
-              <!-- rows injected -->
-            </tbody>
+            <tbody id="leaderboard-body" class="divide-y divide-slate-800"></tbody>
           </table>
         </div>
 
@@ -222,14 +210,14 @@
         </p>
       </section>
 
-      <!-- TOAST POPUP -->
+      <!-- TOAST -->
       <div id="toast" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
         <div class="pop-in bg-slate-900/90 border border-slate-600 rounded-2xl px-6 py-4 text-center shadow-2xl max-w-xs w-[90%]">
           <p id="toast-message" class="text-sm md:text-base font-semibold text-slate-50"></p>
         </div>
       </div>
 
-      <!-- CHECKING OVERLAY (Slot machine style) -->
+      <!-- CHECKING OVERLAY -->
       <div id="checking-overlay" class="fixed inset-0 bg-black/70 flex items-center justify-center z-40 hidden">
         <div class="pop-in bg-slate-900/95 border border-sky-500/60 rounded-3xl px-6 py-6 max-w-sm w-[90%] shadow-2xl text-center">
           <p class="text-xs text-sky-300 mb-1">Hold on chief...</p>
@@ -241,7 +229,6 @@
             <span class="dot-2">.</span>
             <span class="dot-3">.</span>
           </div>
-
           <div class="flex items-center justify-center gap-3">
             <div class="slot-window w-14 rounded-lg border border-slate-600 bg-slate-800/90 text-emerald-300 font-mono text-lg flex items-center justify-center">
               <div class="slot-strip">
@@ -259,7 +246,6 @@
               </div>
             </div>
           </div>
-
           <p class="mt-3 text-[11px] text-slate-400">
             Drum roll loading... 🥁
           </p>
@@ -270,25 +256,14 @@
   </div>
 
   <script>
-    const STORAGE_KEY = "chiefflex_giveaway_entries_v1";
+    // === Supabase client setup ===
+    const SUPABASE_URL = "https://kimriiyyorsygphphmvz.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpbXJpaXl5b3JzeWdwaHBobXZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ4MjIwNjUsImV4cCI6MjA4MDM5ODA2NX0.J7uzp1Fqz2jTmn10-KoboQ7akfDeeGgksaILJrRpuHU";
 
-    /* ===== STORAGE HELPERS ===== */
-    function getEntries() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return [];
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : [];
-      } catch {
-        return [];
-      }
-    }
+    const { createClient } = supabase;
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    function saveEntries(entries) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-    }
-
-    /* ===== TOAST ===== */
+    // === Helpers ===
     function showToast(message, duration = 1800, cb) {
       const toast = document.getElementById("toast");
       const msgEl = document.getElementById("toast-message");
@@ -300,7 +275,6 @@
       }, duration);
     }
 
-    /* ===== PAGE SWITCHING ===== */
     function showPage(id) {
       document.querySelectorAll(".app-page").forEach(p => p.classList.add("hidden"));
       const target = document.getElementById(id);
@@ -310,12 +284,10 @@
       target.classList.add("pop-in");
     }
 
-    /* ===== CONFETTI ===== */
     function fireConfetti() {
       if (typeof confetti !== "function") return;
       const duration = 1600;
       const end = Date.now() + duration;
-
       (function frame() {
         confetti({
           particleCount: 8,
@@ -327,67 +299,17 @@
       })();
     }
 
-    /* ===== SIMPLE SOUND ENGINE (Web Audio beeps, Omo style 😅) ===== */
-    let audioCtx = null;
-    function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-    }
-
-    function playBeep({ freq = 440, duration = 0.15, type = "square", volume = 0.2 } = {}) {
-      if (!audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = type;
-      osc.frequency.value = freq;
-      gain.gain.value = volume;
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
+    function showCheckingOverlay(cb) {
+      const overlay = document.getElementById("checking-overlay");
+      overlay.classList.remove("hidden");
       setTimeout(() => {
-        osc.stop();
-      }, duration * 1000);
+        overlay.classList.add("hidden");
+        if (typeof cb === "function") cb();
+      }, 1500);
     }
 
-    function playRandomWinSound() {
-      initAudio();
-      // Crowd / "Omooo!" vibes: quick rising tones
-      const freqs = [440, 660, 880, 990];
-      freqs.forEach((f, i) => {
-        setTimeout(() => playBeep({ freq: f, duration: 0.12, volume: 0.25 }), i * 80);
-      });
-    }
-
-    function playLoseSound() {
-      initAudio();
-      // "Eyyaaa" low descending tone
-      const freqs = [440, 330, 220];
-      freqs.forEach((f, i) => {
-        setTimeout(() => playBeep({ freq: f, duration: 0.18, type: "sine", volume: 0.2 }), i * 120);
-      });
-    }
-
-    function playDrumRoll() {
-      initAudio();
-      let steps = 16;
-      for (let i = 0; i < steps; i++) {
-        const t = i * 60;
-        setTimeout(() => {
-          const freq = 120 + i * 10;
-          playBeep({ freq, duration: 0.05, type: "triangle", volume: 0.3 });
-        }, t);
-      }
-    }
-
-    function playClick() {
-      initAudio();
-      playBeep({ freq: 300, duration: 0.06, type: "square", volume: 0.15 });
-    }
-
-    /* ===== MOUSE SPARKLES ===== */
+    // Sparkles
     document.addEventListener("mousemove", (e) => {
-      // Slight throttle
       if (Math.random() > 0.3) return;
       const s = document.createElement("div");
       s.className = "sparkle";
@@ -397,11 +319,24 @@
       setTimeout(() => s.remove(), 600);
     });
 
-    /* ===== LEADERBOARD RENDER ===== */
-    function renderLeaderboard() {
+    // === Leaderboard ===
+    async function fetchLeaderboard() {
+      const { data, error } = await supabaseClient
+        .from("entries")
+        .select("*")
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        console.error("Leaderboard error:", error);
+        return [];
+      }
+      return data || [];
+    }
+
+    async function renderLeaderboard() {
       const tbody = document.getElementById("leaderboard-body");
-      const entries = getEntries();
       tbody.innerHTML = "";
+      const entries = await fetchLeaderboard();
 
       if (!entries.length) {
         tbody.innerHTML = `
@@ -416,11 +351,10 @@
 
       entries.forEach((entry, index) => {
         const pos = index + 1;
+        const isTop1 = index === 0;
         const tr = document.createElement("tr");
         tr.className = "slide-in";
         tr.style.animationDelay = (index * 120) + "ms";
-
-        const isTop1 = index === 0;
 
         tr.innerHTML = `
           <td class="px-4 py-3 text-xs md:text-sm font-bold ${isTop1 ? 'text-amber-300' : 'text-slate-100'}">
@@ -431,28 +365,14 @@
             <span>${entry.username || "-"}</span>
           </td>
         `;
-
         tbody.appendChild(tr);
       });
     }
 
-    /* ===== SLOT MACHINE / CHECKING FLOW ===== */
-    function showCheckingOverlay(cb) {
-      const overlay = document.getElementById("checking-overlay");
-      overlay.classList.remove("hidden");
-      // start drum roll
-      playDrumRoll();
-      setTimeout(() => {
-        overlay.classList.add("hidden");
-        if (typeof cb === "function") cb();
-      }, 1500);
-    }
-
-    /* ===== FORM HANDLER ===== */
+    // === Form handler ===
     const form = document.getElementById("entry-form");
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      playClick();
 
       const username = document.getElementById("username").value.trim();
       const fullname = document.getElementById("fullname").value.trim();
@@ -462,24 +382,30 @@
         showToast("Oga abeg fill everything first 😒");
         return;
       }
-
       if (!email.includes("@") || !email.includes(".")) {
         showToast("This your email dey somehow. Check am again 🙃");
         return;
       }
 
-      const entries = getEntries();
-      const position = entries.length + 1;
+      showCheckingOverlay(async () => {
+        const { data: insertedRows, error: insertError } = await supabaseClient
+          .from("entries")
+          .insert([{ username, fullname, email }])
+          .select()
+          .limit(1);
 
-      // save entry immediately
-      entries.push({ username });
-      saveEntries(entries);
+        if (insertError || !insertedRows || !insertedRows.length) {
+          console.error("Insert error:", insertError);
+          showToast("Network wahala. Try again small later 🙏");
+          return;
+        }
 
-      // Show slot-machine "checking"
-      showCheckingOverlay(() => {
+        const inserted = insertedRows[0];
+        const allEntries = await fetchLeaderboard();
+        const index = allEntries.findIndex(e => e.id === inserted.id);
+        const position = index === -1 ? allEntries.length : index + 1;
+
         if (position <= 2) {
-          // Winner path
-          playRandomWinSound();
           fireConfetti();
           showToast("You made it, you rock! 🤘", 1300, () => {
             document.getElementById("winner-username").textContent = username;
@@ -487,10 +413,8 @@
             showPage("page-winner");
           });
         } else {
-          // Not top 2
-          playLoseSound();
-          showToast("Eyya sorry ehn, next time buy Starlink 😂", 1800, () => {
-            renderLeaderboard();
+          showToast("Eyya sorry ehn, next time buy Starlink 😂", 1800, async () => {
+            await renderLeaderboard();
             showPage("page-leaderboard");
           });
         }
@@ -499,22 +423,20 @@
       form.reset();
     });
 
-    /* ===== BUTTONS ===== */
+    // === Buttons ===
     document.getElementById("back-home").addEventListener("click", () => {
-      playClick();
       showPage("page-form");
     });
 
-    document.getElementById("winner-view-leaderboard").addEventListener("click", () => {
-      playClick();
-      renderLeaderboard();
+    document.getElementById("winner-view-leaderboard").addEventListener("click", async () => {
+      await renderLeaderboard();
       showPage("page-leaderboard");
     });
 
-    // Initial
-    document.addEventListener("DOMContentLoaded", () => {
+    // Init
+    document.addEventListener("DOMContentLoaded", async () => {
       showPage("page-form");
-      renderLeaderboard();
+      await renderLeaderboard();
     });
   </script>
 </body>
