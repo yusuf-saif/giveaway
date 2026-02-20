@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Giveaway Dashboard – Leaderboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Supabase JS v2 (UMD) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      background:
+        radial-gradient(circle at top, #4c1d95 0, #020617 45%) fixed,
+        radial-gradient(circle at bottom, #064e3b 0, #020617 55%) fixed;
+      overflow-x: hidden;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen text-slate-50">
+
+  <!-- Skip link for keyboard users -->
+  <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:rounded-lg focus:bg-slate-950 focus:border focus:border-slate-600">
+    Skip to content
+  </a>
+
+  <header class="px-4 py-6">
+    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-black tracking-tight">Leaderboard Dashboard 👑</h1>
+        <p class="text-slate-300 text-sm">A clean, accessible view of entrants (mobile-friendly).</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <a href="./index.html" class="inline-flex items-center justify-center px-4 py-2 rounded-xl border border-slate-600 bg-slate-900/70 hover:bg-slate-800 text-sm">
+          ← Back to Entry
+        </a>
+        <button id="refresh" type="button" class="inline-flex items-center justify-center px-4 py-2 rounded-xl border border-emerald-400/50 bg-emerald-500/10 hover:bg-emerald-500/15 text-sm">
+          Refresh
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="px-4 pb-10" role="main">
+    <div class="max-w-5xl mx-auto">
+
+      <!-- Stats -->
+      <section class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6" aria-label="Summary statistics">
+        <div class="rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
+          <p class="text-xs text-slate-400">Total entries</p>
+          <p id="stat-total" class="text-2xl font-extrabold">—</p>
+        </div>
+        <div class="rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
+          <p class="text-xs text-slate-400">Current #1</p>
+          <p id="stat-top" class="text-2xl font-extrabold">—</p>
+        </div>
+        <div class="rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
+          <p class="text-xs text-slate-400">Last updated</p>
+          <p id="stat-updated" class="text-2xl font-extrabold">—</p>
+        </div>
+      </section>
+
+      <!-- Controls -->
+      <section class="rounded-3xl border border-slate-700 bg-slate-900/60 p-4 sm:p-6 mb-4" aria-label="Filters">
+        <div class="flex flex-col sm:flex-row gap-3 sm:items-end">
+          <div class="flex-1">
+            <label for="search" class="block text-sm font-semibold">Search username</label>
+            <input id="search" type="search" inputmode="search" autocomplete="off"
+              class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-slate-700 placeholder-slate-500 focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-sm"
+              placeholder="Type to filter…" />
+            <p class="mt-2 text-xs text-slate-400">Tip: This is client-side filtering (fast + private).</p>
+          </div>
+          <div class="flex gap-2">
+            <button id="export" type="button" class="px-4 py-3 rounded-xl border border-slate-600 bg-slate-950/40 hover:bg-slate-800 text-sm">
+              Export CSV
+            </button>
+            <button id="toggle" type="button" class="px-4 py-3 rounded-xl border border-slate-600 bg-slate-950/40 hover:bg-slate-800 text-sm">
+              Toggle view
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <p id="live" class="sr-only" aria-live="polite"></p>
+
+      <!-- Mobile cards -->
+      <section id="cards" class="grid grid-cols-1 sm:hidden gap-3" aria-label="Leaderboard list"></section>
+
+      <!-- Desktop table -->
+      <section id="table-section" class="hidden sm:block" aria-label="Leaderboard table">
+        <div class="overflow-hidden rounded-3xl border border-slate-700 bg-slate-950/50">
+          <table class="w-full text-sm" aria-describedby="table-desc">
+            <caption class="sr-only">Leaderboard table with position, username, name and time</caption>
+            <thead class="bg-slate-800/90 text-slate-300">
+              <tr>
+                <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide">Pos</th>
+                <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide">Username</th>
+                <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide">Full name</th>
+                <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide">Email</th>
+                <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide">Time</th>
+              </tr>
+            </thead>
+            <tbody id="tbody" class="divide-y divide-slate-800"></tbody>
+          </table>
+        </div>
+        <p id="table-desc" class="sr-only">Sorted by entry time, earliest first.</p>
+      </section>
+
+      <div id="empty" class="hidden mt-6 rounded-2xl border border-slate-700 bg-slate-900/60 p-6 text-center">
+        <p class="text-slate-200 font-semibold">No entries found.</p>
+        <p class="text-slate-400 text-sm mt-1">Try a different search, or refresh.</p>
+      </div>
+
+      <footer class="mt-8 text-center text-xs text-slate-500">
+        Built with accessibility in mind: keyboard-friendly, responsive layout, and reduced-motion support.
+      </footer>
+    </div>
+  </main>
+
+  <script src="./assets/js/dashboard.js"></script>
+</body>
+</html>

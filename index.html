@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>Chief Flex Giveaway –  😅</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -21,6 +22,18 @@
         radial-gradient(circle at bottom, #064e3b 0, #020617 55%) fixed;
       overflow-x: hidden;
       cursor: crosshair;
+    }
+
+    /* Respect reduced motion preferences */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+      body { cursor: auto; }
+      .sparkle { display: none !important; }
     }
 
     @keyframes floaty {
@@ -93,7 +106,12 @@
 </head>
 <body class="min-h-screen text-slate-50 flex items-center justify-center p-4">
 
-  <div class="w-full max-w-xl mx-auto">
+  <!-- Skip link for keyboard users -->
+  <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:rounded-lg focus:bg-slate-950 focus:border focus:border-slate-600">
+    Skip to content
+  </a>
+
+  <main id="main" class="w-full max-w-xl mx-auto" role="main">
 
     <div class="text-center mb-6">
       <h1 class="text-4xl md:text-5xl font-black tracking-tight text-white drop-shadow-xl floaty">
@@ -111,32 +129,64 @@
       <div class="absolute -bottom-16 -left-10 w-48 h-48 bg-emerald-500/25 rounded-full blur-3xl"></div>
 
       <!-- PAGE: FORM -->
-      <section id="page-form" class="app-page pop-in relative z-10">
+      <section id="page-form" class="app-page pop-in relative z-10" aria-labelledby="form-title">
         <h2 class="text-xl md:text-2xl font-bold mb-4 flex items-center gap-2">
           <span class="inline-flex items-center justify-center px-3 py-1 rounded-full bg-gradient-to-r from-sky-400 to-emerald-300 text-slate-900 text-xs font-black">
             STEP 1
           </span>
-          Enter the Arena ⚔️
+          <span id="form-title">Enter the Arena ⚔️</span>
         </h2>
 
-        <form id="entry-form" class="space-y-4 mt-3">
-          <input
-            id="username"
-            placeholder="Username (@saifyusuph)"
-            class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 placeholder-slate-500 focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-sm"
-          />
-          <input
-            id="fullname"
-            placeholder="Full Name (S A Yusuf)"
-            class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 placeholder-slate-500 focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-sm"
-          />
-          <input
-            id="email"
-            placeholder="Email (chief@example.com)"
-            class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 placeholder-slate-500 focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-sm"
-          />
+        <form id="entry-form" class="space-y-4 mt-3" novalidate>
+          <p id="form-help" class="text-xs text-slate-300">
+            Fill in your details. All fields are required.
+          </p>
 
-          <button class="fun-btn w-full mt-2 py-3 rounded-xl bg-gradient-to-r from-amber-300 via-emerald-300 to-sky-300 text-slate-900 font-extrabold text-base md:text-lg">
+          <div>
+            <label class="sr-only" for="username">Username</label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              inputmode="text"
+              autocomplete="username"
+              required
+              aria-describedby="form-help"
+              placeholder="Username (@saifyusuph)"
+              class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 placeholder-slate-500 focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-sm"
+            />
+          </div>
+
+          <div>
+            <label class="sr-only" for="fullname">Full name</label>
+            <input
+              id="fullname"
+              name="fullname"
+              type="text"
+              autocomplete="name"
+              required
+              placeholder="Full Name (S A Yusuf)"
+              class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 placeholder-slate-500 focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-sm"
+            />
+          </div>
+
+          <div>
+            <label class="sr-only" for="email">Email</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              inputmode="email"
+              autocomplete="email"
+              required
+              placeholder="Email (chief@example.com)"
+              class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 placeholder-slate-500 focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-sm"
+            />
+          </div>
+
+          <p id="form-error" class="hidden text-xs text-rose-200 bg-rose-500/10 border border-rose-400/30 rounded-xl px-4 py-3" role="alert"></p>
+
+          <button type="submit" class="fun-btn w-full mt-2 py-3 rounded-xl bg-gradient-to-r from-amber-300 via-emerald-300 to-sky-300 text-slate-900 font-extrabold text-base md:text-lg">
             NEXT 👉
           </button>
         </form>
@@ -147,12 +197,12 @@
       </section>
 
       <!-- PAGE: WINNER -->
-      <section id="page-winner" class="app-page hidden text-center relative z-10">
+      <section id="page-winner" class="app-page hidden text-center relative z-10" aria-labelledby="winner-title">
         <div class="inline-flex w-24 h-24 items-center justify-center rounded-full bg-emerald-500/20 border border-emerald-300 mb-5 floaty">
           <span class="text-4xl">🔥</span>
         </div>
 
-        <h2 class="text-3xl font-extrabold text-emerald-300 drop-shadow glow-pulse">
+        <h2 id="winner-title" class="text-3xl font-extrabold text-emerald-300 drop-shadow glow-pulse">
           Wow you made it cheif... 🤘
         </h2>
 
@@ -166,23 +216,25 @@
           <p class="text-slate-100 text-sm"><span class="font-semibold">Position:</span> <span id="winner-position"></span></p>
         </div>
 
-        <button
+        <a
           id="winner-view-leaderboard"
-          class="fun-btn mt-6 px-6 py-3 rounded-xl border border-slate-600 bg-slate-800/70 text-slate-100 text-sm md:text-base hover:bg-slate-700/90"
+          href="./dashboard.html"
+          class="fun-btn inline-flex items-center justify-center mt-6 px-6 py-3 rounded-xl border border-slate-600 bg-slate-800/70 text-slate-100 text-sm md:text-base hover:bg-slate-700/90"
         >
           View Leaderboard 📜
-        </button>
+        </a>
       </section>
 
       <!-- PAGE: LEADERBOARD -->
-      <section id="page-leaderboard" class="app-page hidden relative z-10">
+      <section id="page-leaderboard" class="app-page hidden relative z-10" aria-labelledby="leaderboard-title">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-2xl font-extrabold text-white flex items-center gap-2">
+          <h2 id="leaderboard-title" class="text-2xl font-extrabold text-white flex items-center gap-2">
             <span class="crown-bounce text-2xl">👑</span>
             Leaderboard
           </h2>
           <button
             id="back-home"
+            type="button"
             class="fun-btn px-3 py-1.5 rounded-full border border-slate-600 bg-slate-900/80 text-[11px] text-slate-200 hover:bg-slate-800"
           >
             Enter again 🔁
@@ -194,7 +246,8 @@
         </p>
 
         <div class="overflow-hidden rounded-2xl border border-slate-700 bg-slate-950/70">
-          <table class="w-full text-sm">
+          <table class="w-full text-sm" aria-describedby="leaderboard-desc">
+            <caption class="sr-only">Leaderboard showing positions and usernames</caption>
             <thead class="bg-slate-800/90 text-slate-300">
               <tr>
                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide">Pos</th>
@@ -205,23 +258,31 @@
           </table>
         </div>
 
+        <p id="leaderboard-desc" class="sr-only">This table updates from the server and lists all entrants in order.</p>
+
+        <div class="mt-4 flex flex-col sm:flex-row gap-2">
+          <a href="./dashboard.html" class="fun-btn inline-flex items-center justify-center px-4 py-2 rounded-xl border border-slate-600 bg-slate-900/70 text-sm hover:bg-slate-800">
+            Open Dashboard (full view)
+          </a>
+        </div>
+
         <p class="mt-3 text-[11px] text-slate-400 text-center">
           If you no see your username at top, no vex. Even Messi dey bench sometimes. 🥲
         </p>
       </section>
 
       <!-- TOAST -->
-      <div id="toast" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+      <div id="toast" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="toast-message">
         <div class="pop-in bg-slate-900/90 border border-slate-600 rounded-2xl px-6 py-4 text-center shadow-2xl max-w-xs w-[90%]">
           <p id="toast-message" class="text-sm md:text-base font-semibold text-slate-50"></p>
         </div>
       </div>
 
       <!-- CHECKING OVERLAY -->
-      <div id="checking-overlay" class="fixed inset-0 bg-black/70 flex items-center justify-center z-40 hidden">
+      <div id="checking-overlay" class="fixed inset-0 bg-black/70 flex items-center justify-center z-40 hidden" role="dialog" aria-modal="true" aria-labelledby="checking-title">
         <div class="pop-in bg-slate-900/95 border border-sky-500/60 rounded-3xl px-6 py-6 max-w-sm w-[90%] shadow-2xl text-center">
           <p class="text-xs text-sky-300 mb-1">Hold on chief...</p>
-          <h3 class="text-xl font-extrabold text-white mb-2">
+          <h3 id="checking-title" class="text-xl font-extrabold text-white mb-2">
             Checking if you're top 2 😈
           </h3>
           <div class="flex justify-center gap-1 mb-4 text-slate-300">
@@ -253,7 +314,7 @@
       </div>
 
     </div>
-  </div>
+  </main>
 
   <script>
     // === Supabase client setup ===
@@ -308,8 +369,9 @@
       }, 1500);
     }
 
-    // Sparkles
+    // Sparkles (decorative). Disabled for reduced motion.
     document.addEventListener("mousemove", (e) => {
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       if (Math.random() > 0.3) return;
       const s = document.createElement("div");
       s.className = "sparkle";
@@ -371,18 +433,35 @@
 
     // === Form handler ===
     const form = document.getElementById("entry-form");
+    const formError = document.getElementById("form-error");
+
+    function setFormError(message) {
+      if (!message) {
+        formError.classList.add('hidden');
+        formError.textContent = '';
+        return;
+      }
+      formError.textContent = message;
+      formError.classList.remove('hidden');
+    }
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
+
+      setFormError("");
 
       const username = document.getElementById("username").value.trim();
       const fullname = document.getElementById("fullname").value.trim();
       const email = document.getElementById("email").value.trim();
 
       if (!username || !fullname || !email) {
+        setFormError("Please fill in all fields.");
         showToast("Oga abeg fill everything first 😒");
         return;
       }
-      if (!email.includes("@") || !email.includes(".")) {
+      // Basic email validation (HTML5 also validates)
+      if (!/^\S+@\S+\.\S+$/.test(email)) {
+        setFormError("Please enter a valid email address.");
         showToast("This your email dey somehow. Check am again 🙃");
         return;
       }
@@ -396,6 +475,7 @@
 
         if (insertError || !insertedRows || !insertedRows.length) {
           console.error("Insert error:", insertError);
+          setFormError("Something went wrong. Please try again.");
           showToast("Network wahala. Try again small later 🙏");
           return;
         }
@@ -428,10 +508,7 @@
       showPage("page-form");
     });
 
-    document.getElementById("winner-view-leaderboard").addEventListener("click", async () => {
-      await renderLeaderboard();
-      showPage("page-leaderboard");
-    });
+    // NOTE: "View Leaderboard" is now a normal link to dashboard.html.
 
     // Init
     document.addEventListener("DOMContentLoaded", async () => {
